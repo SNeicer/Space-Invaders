@@ -4,6 +4,7 @@ pygame.init()
 pygame.font.init()
 pygame.time.set_timer(pygame.USEREVENT, 30000)
 
+# Настраеваем экрна
 size = width, height = (1280, 720)
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption('Space Invaders 2.2')
@@ -20,7 +21,7 @@ PlayerShootS = pygame.mixer.Sound('data/Sounds/PlayerShot.ogg')
 ExploseS = pygame.mixer.Sound('data/Sounds/Explosion.ogg')
 UFOS = pygame.mixer.Sound('data/Sounds/UFOSound.ogg')
 
-
+# Создаём функцию для удобной загрузки спрайтов в игру
 def load_image(name):
     fullname = 'data' + '/' + name
     try:
@@ -34,9 +35,11 @@ def load_image(name):
 
     return image
 
+# Загружаем иконку
 GameIcon = load_image('Player.png')
 pygame.display.set_icon(GameIcon)
 
+# Создаём класс взрыва
 class Explode(pygame.sprite.Sprite):
 
     image = load_image('Explose1.png')
@@ -64,7 +67,7 @@ class Explode(pygame.sprite.Sprite):
         else:
             self.TimeToAddCounter -= 1
 
-
+# Создаём класс игрока
 class Player(pygame.sprite.Sprite):
 
     image = load_image('Shuttle.png')
@@ -82,6 +85,7 @@ class Player(pygame.sprite.Sprite):
     def update(self):
         self.rect = self.rect.move(self.vx, self.vy)
 
+# Создаём класс пули игрока
 class BulletPlayer(pygame.sprite.Sprite):
 
     image = load_image('PlayerBullet.png')
@@ -101,6 +105,7 @@ class BulletPlayer(pygame.sprite.Sprite):
         if self.rect.y < -50:
             self.kill()
 
+# Создаём класс врага
 class Enemy(pygame.sprite.Sprite):
 
     image11 = load_image('Fly1/Fly11.png')
@@ -210,7 +215,7 @@ class Enemy(pygame.sprite.Sprite):
         else:
             self.StrafeTimer -= 1
 
-
+# Создаём класс НЛО
 class UFO(pygame.sprite.Sprite):
 
     image = load_image('UFO.png')
@@ -245,6 +250,7 @@ class UFO(pygame.sprite.Sprite):
         else:
             self.supdTimer -= 1
 
+# Создаём класс пули врага
 class BulletEnemy(pygame.sprite.Sprite):
 
     image = load_image('EnemyBullet.png')
@@ -269,6 +275,7 @@ class BulletEnemy(pygame.sprite.Sprite):
             Explode(self.rect.x, self.rect.y, 64)
             self.kill()
 
+# Создаём класс блока
 class Block(pygame.sprite.Sprite):
 
     image = load_image('Block/Block1.png')
@@ -315,7 +322,7 @@ class Block(pygame.sprite.Sprite):
     def killP(self):
         self.kill()
 
-
+# Создаём класс заднего фона
 class Background(pygame.sprite.Sprite):
 
     image = load_image('Background.png')
@@ -327,10 +334,12 @@ class Background(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
 
+# Загружаем системный шрифт в переменную
 GameFont = pygame.font.SysFont('calibri', 30)
 ScoreText = GameFont.render('Score: ' + str(score), 1, (255, 255, 255))
 LivesText = GameFont.render('Additional.Lives: ' + str(PlayerLives), 1, (255, 255, 255))
 
+# Группируем спрайты
 BP = pygame.sprite.Group()
 EneB = pygame.sprite.Group()
 Enemys = pygame.sprite.Group()
@@ -338,9 +347,11 @@ PlayersG = pygame.sprite.Group()
 Blocks = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 
+# Создаём объекты
 BackGroundObj = Background(0, 0)
 player = Player(640, 640)
 
+# Создаём ряды врагов
 ene_x, ene_y = 70, 100
 typeInLoop = 1
 typeEnemyGo = 1
@@ -361,14 +372,17 @@ for i in range(6):
     ene_y += 45
     ene_x -= 15 * 70
 
+# Создаём ряды блоков
 BlockLine1 = [Block(200, 560), Block(232, 560), Block(264, 560)]
 BlockLine2 = [Block(400, 560), Block(432, 560), Block(464, 560)]
 BlockLine3 = [Block(600, 560), Block(632, 560), Block(664, 560)]
 BlockLine4 = [Block(800, 560), Block(832, 560), Block(864, 560)]
 BlockLine5 = [Block(1000, 560), Block(1032, 560), Block(1064, 560)]
 
+# Главный цикл игры
 running = True
 while running:
+    # Управление
     keys = pygame.key.get_pressed()
 
     if keys[pygame.K_LEFT]:
@@ -376,6 +390,7 @@ while running:
     if keys[pygame.K_RIGHT]:
         player.rect.x += 4
 
+    # Проверка на жизни персонажа
     if IsPlayerAlive == 0:
         if PlayerLives >= 1:
             IsPlayerAlive = 1
@@ -384,9 +399,8 @@ while running:
         elif PlayerLives == 0:
             PlayerLives = -1
 
+    # После убийства всех монстров даём игроку +1 Жизнь и создаём новый ряд врагов ускоряя их
     if len(Enemys) <= 0:
-
-
         ene_x, ene_y = 70, 100
         typeInLoop = 1
         typeEnemyGo = 1
@@ -410,7 +424,7 @@ while running:
         if DownTimerG > 6:
             DownTimerG -= 2
 
-
+    # Стрельба и появление НЛО после таймера
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN and event.key == pygame.K_z and PlayerLives >= 0:
             if len(BP) < 4 and PlayerLives >= 0:
@@ -423,7 +437,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-
+    # Рендер (рисование) спрайтов
     screen.fill((0, 0, 0))
     screen.blit(BackGroundObj.image, BackGroundObj.rect)
     for sprite in all_sprites:
