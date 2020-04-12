@@ -385,9 +385,9 @@ while running:
     # Управление
     keys = pygame.key.get_pressed()
 
-    if keys[pygame.K_LEFT]:
+    if keys[pygame.K_LEFT] and player.rect.x > 0:
         player.rect.x -= 4
-    if keys[pygame.K_RIGHT]:
+    if keys[pygame.K_RIGHT] and player.rect.x < 1230:
         player.rect.x += 4
 
     # Проверка на жизни персонажа
